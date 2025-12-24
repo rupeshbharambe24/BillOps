@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-start: #f7f2e8;
+  --bg-end: #e8f0f4;
+  --ink: #1f2a33;
+  --accent: #0f766e;
+  --accent-soft: #99d7cf;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #d5efe9 0%, transparent 55%),
+    radial-gradient(900px 600px at 0% 0%, #f8e8d1 0%, transparent 50%),
+    linear-gradient(120deg, var(--bg-start), var(--bg-end));
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: rgba(15, 118, 110, 0.2);
+}
+
+.page-fade {
+  opacity: 0;
+  animation: fade-up 0.7s ease-out forwards;
+}
+
+.card-surface {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 16px 40px -20px rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(14px);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
