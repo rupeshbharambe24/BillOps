@@ -1,6 +1,33 @@
 # Billing Event Processing System
 
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=nextdotjs)
+![Docker](https://img.shields.io/badge/Docker-compose-2496ED?logo=docker&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
 A production-lean billing ledger that ingests events from multiple sources, deduplicates by `event_id`, and maintains per-user balances even when events arrive out of order.
+
+## Project structure
+```text
+BillOps/
+├── backend/
+│   ├── app/
+│   │   ├── main.py        # FastAPI routes
+│   │   ├── processor.py   # idempotent ingest, overdraft check, recompute
+│   │   ├── storage.py     # SQLAlchemy engine/session (DATABASE_URL)
+│   │   ├── models.py      # events, balances, rejected_events tables
+│   │   └── schemas.py     # Pydantic request/response models
+│   ├── tests/             # pytest suite for the processor
+│   ├── Dockerfile
+│   └── requirements*.txt
+├── frontend/              # Next.js 14 (app router) + Tailwind
+│   ├── app/               # dashboard, ingest, events, balances, rejections pages
+│   ├── components/
+│   └── lib/               # API client, formatting, sample payload
+├── docker-compose.yml
+└── .env.example
+```
 
 ## Architecture
 - **Event ledger + cached balances**: `events` is the immutable ledger; `balances` caches the current total per user.
@@ -14,7 +41,7 @@ A production-lean billing ledger that ingests events from multiple sources, dedu
 ```bash
 cd backend
 python -m venv .venv
-.\.venv\Scripts\activate
+source .venv/bin/activate        # Windows: .\.venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
@@ -34,9 +61,11 @@ npm run dev
 ```
 
 ## Environment
-Create `.env` from `.env.example` at the repo root.
-- `NEXT_PUBLIC_API_URL`: base URL for the backend API
-- `DATABASE_URL`: SQLite by default; swap to Postgres when ready
+See `.env.example`. The code reads plain environment variables (no `.env` loader), so export them in the shell
+or, for the frontend, put `NEXT_PUBLIC_API_URL` in `frontend/.env.local`. All have local defaults.
+- `NEXT_PUBLIC_API_URL`: base URL for the backend API (default `http://localhost:8000`)
+- `DATABASE_URL`: SQLite by default (`sqlite:///./billing.db`, created on startup); swap to Postgres when ready
+- `CORS_ORIGINS`: comma-separated allowed origins for the API (default `*`)
 
 ## Crash safety
 - The ingest flow wraps the event insert + balance update in a **single transaction**.
@@ -63,3 +92,6 @@ docker compose up --build
 - `GET /events?page=&limit=&user_id=&type=&sort=`
 - `GET /rejections?page=&limit=`
 - `POST /balances/recompute`
+
+## License
+Released under the [MIT License](LICENSE).
