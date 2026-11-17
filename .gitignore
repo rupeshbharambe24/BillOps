@@ -12,8 +12,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -82,3 +82,12 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+# ==========================================
+# Next.js build output & local databases
+# ==========================================
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+*.db
+*.sqlite3
